@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:moneyapp/models/category/category_model.dart';
 
+ValueNotifier<CategoryType> selectCategoryNotifer =
+    ValueNotifier(CategoryType.income);
 Future<void> showCategoryAddPopup(BuildContext context) async {
+  final _nameeditingController = TextEditingController();
   showDialog(
       context: context,
       builder: (ctx) {
@@ -11,6 +14,7 @@ Future<void> showCategoryAddPopup(BuildContext context) async {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: TextFormField(
+                controller: _nameeditingController,
                 decoration: InputDecoration(
                     border: OutlineInputBorder(), hintText: 'Category Name'),
               ),
@@ -32,32 +36,32 @@ Future<void> showCategoryAddPopup(BuildContext context) async {
       });
 }
 
-class RadioButton extends StatefulWidget {
+class RadioButton extends StatelessWidget {
   final String title;
   final CategoryType type;
   const RadioButton({Key? key, required this.title, required this.type})
       : super(key: key);
 
   @override
-  State<RadioButton> createState() => _RadioButtonState();
-}
-
-CategoryType? _type;
-
-class _RadioButtonState extends State<RadioButton> {
-  @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Radio<CategoryType>(
-            value: widget.type,
-            groupValue: _type,
-            onChanged: (value) {
-              setState(() {
-                _type = value;
-              });
+        ValueListenableBuilder(
+            valueListenable: selectCategoryNotifer,
+            builder: (BuildContext ctx, CategoryType newCategory, _) {
+              return Radio<CategoryType>(
+                  value: type,
+                  groupValue: selectCategoryNotifer.value,
+                  onChanged: (value) {
+                    if (value != null) {
+                      selectCategoryNotifer.value = value;
+                      selectCategoryNotifer.notifyListeners();
+                    } else {
+                      return;
+                    }
+                  });
             }),
-        Text(widget.title),
+        Text(title),
       ],
     );
   }
