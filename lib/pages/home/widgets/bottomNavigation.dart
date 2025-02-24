@@ -17,10 +17,10 @@ class Bottomnavigation extends StatelessWidget {
               Homepage.selectedIndexNotifier.value = newIndex;
             },
             items: const [
+              BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
               BottomNavigationBarItem(
-                  icon: Icon(Icons.home), label: "Transactions"),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.category), label: "Category")
+                  icon: Icon(Icons.currency_rupee_rounded), label: "Expenses"),
+              BottomNavigationBarItem(icon: Icon(Icons.money), label: "Income")
             ]);
       },
     );
