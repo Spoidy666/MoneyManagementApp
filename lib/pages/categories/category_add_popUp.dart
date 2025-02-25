@@ -3,7 +3,7 @@ import 'package:moneyapp/db/category_db.dart';
 import 'package:moneyapp/models/category_model.dart';
 
 ValueNotifier<CategoryType> selectCategoryNotifer =
-    ValueNotifier(CategoryType.income);
+    ValueNotifier(CategoryType.expense);
 Future<void> showCategoryAddPopup(BuildContext context) async {
   final _nameeditingController = TextEditingController();
   final _amountEditingController = TextEditingController();
@@ -11,14 +11,14 @@ Future<void> showCategoryAddPopup(BuildContext context) async {
       context: context,
       builder: (ctx) {
         return SimpleDialog(
-          title: Text('Add Category'),
+          title: Text('Add new'),
           children: [
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: TextFormField(
                 controller: _nameeditingController,
                 decoration: InputDecoration(
-                    border: OutlineInputBorder(), hintText: 'Category Name'),
+                    border: OutlineInputBorder(), hintText: 'Name'),
               ),
             ),
             Padding(
@@ -33,31 +33,39 @@ Future<void> showCategoryAddPopup(BuildContext context) async {
                 padding: const EdgeInsets.all(8.0),
                 child: Row(
                   children: [
-                    RadioButton(title: 'Income', type: CategoryType.income),
-                    RadioButton(title: 'Expenses', type: CategoryType.expense)
+                    RadioButton(title: 'Expenses', type: CategoryType.expense),
+                    RadioButton(title: 'Income', type: CategoryType.income)
                   ],
                 )),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: ElevatedButton(
                   onPressed: () {
-                    if (selectCategoryNotifer.value == CategoryType.expense) {
-                      final _name = _nameeditingController.text.trim();
-                      final _type = CategoryType.expense;
-                      final _amount = _amountEditingController.text.trim();
-                      final _values = CategoryModel(
-                          name: _name, type: _type, amount: _amount);
+                    if (_nameeditingController.text.trim().isEmpty) {
+                      snack(context, 'please enter a name ');
+                    } else if (_amountEditingController.text.trim().isEmpty) {
+                      snack(context, 'Enter the amount idiot');
+                    } else {
+                      if (selectCategoryNotifer.value == CategoryType.expense) {
+                        final _name = _nameeditingController.text.trim();
+                        final _type = CategoryType.expense;
+                        final _amount = _amountEditingController.text.trim();
+                        final _values = CategoryModel(
+                            name: _name, type: _type, amount: _amount);
+                        Navigator.of(context).pop();
 
-                      addNewExpense(_values);
-                    } else if (selectCategoryNotifer.value ==
-                        CategoryType.income) {
-                      final _name = _nameeditingController.text.trim();
-                      final _type = CategoryType.income;
-                      final _amount = _amountEditingController.text.trim();
-                      final _values = CategoryModel(
-                          name: _name, type: _type, amount: _amount);
+                        addNewExpense(_values);
+                      } else if (selectCategoryNotifer.value ==
+                          CategoryType.income) {
+                        final _name = _nameeditingController.text.trim();
+                        final _type = CategoryType.income;
+                        final _amount = _amountEditingController.text.trim();
+                        final _values = CategoryModel(
+                            name: _name, type: _type, amount: _amount);
 
-                      addNewIncome(_values);
+                        addNewExpense(_values);
+                        Navigator.of(context).pop();
+                      }
                     }
                   },
                   child: Text('Add')),
@@ -96,4 +104,12 @@ class RadioButton extends StatelessWidget {
       ],
     );
   }
+}
+
+void snack(context, String content) {
+  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    content: Text(content),
+    backgroundColor: Colors.red,
+    behavior: SnackBarBehavior.fixed,
+  ));
 }

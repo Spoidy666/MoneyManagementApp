@@ -4,24 +4,34 @@ import 'package:moneyapp/pages/categories/category_add_popUp.dart';
 import 'package:moneyapp/pages/categories/expenseList.dart';
 import 'package:moneyapp/pages/categories/incomeList.dart';
 import 'package:moneyapp/pages/home/widgets/bottomNavigation.dart';
+import 'package:moneyapp/pages/settings.dart';
 import 'package:moneyapp/pages/transactions/transactions.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Homepage extends StatelessWidget {
-  const Homepage({super.key});
+  Homepage({super.key});
 
   static ValueNotifier<int> selectedIndexNotifier = ValueNotifier(0);
+  static ValueNotifier<String> nameNotifier = ValueNotifier("Name");
   final _pages = const [Transactions(), Expenselist(), Incomelist()];
+
   @override
   Widget build(BuildContext context) {
+    getName();
     return Scaffold(
       backgroundColor: Colors.grey[200],
       floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.white,
         onPressed: () {
           showCategoryAddPopup(context);
         },
-        child: Icon(Icons.add),
+        child: Icon(
+          Icons.add,
+          color: Colors.black,
+        ),
       ),
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -34,11 +44,21 @@ class Homepage extends StatelessWidget {
                   SizedBox(
                     width: 20,
                   ),
-                  Text("Name"),
+                  ValueListenableBuilder<String>(
+                      valueListenable: nameNotifier,
+                      builder: (context, name, _) {
+                        return Text(name);
+                      }),
                 ],
               ),
             ),
-            IconButton(onPressed: () {}, icon: Icon(Icons.settings))
+            IconButton(
+                onPressed: () {
+                  Navigator.of(context).push(MaterialPageRoute(builder: (ctx) {
+                    return Settings();
+                  }));
+                },
+                icon: Icon(Icons.settings))
           ],
         ),
       ),
@@ -57,5 +77,11 @@ class Homepage extends StatelessWidget {
       ),
       bottomNavigationBar: Bottomnavigation(),
     );
+  }
+
+  Future<void> getName() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String a = await sharedPreferences.getString('name').toString();
+    nameNotifier.value = a;
   }
 }
