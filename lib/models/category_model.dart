@@ -1,17 +1,22 @@
 enum CategoryType { income, expense }
 
+enum transferType { cash, card,upi }
+
 class CategoryModel {
   int? id;
   final String name;
-  final bool isDeleted;
+  final transferType ttype;
   final String amount;
   final CategoryType type;
+  final DateTime date;
 
   CategoryModel({
     required this.name,
     required this.type,
+
+    required this.ttype,
     required this.amount,
-    this.isDeleted = false,
+    required this.date,
     this.id,
   });
 
@@ -20,8 +25,9 @@ class CategoryModel {
       'id': id,
       'name': name,
       'type': type.name,
+      'ttype':ttype.name,
+      'date': date.toIso8601String().split(" ")[0],
       'amount': amount,
-      'isDeleted': isDeleted ? 1 : 0,
     };
   }
 
@@ -29,15 +35,15 @@ class CategoryModel {
     return CategoryModel(
       id: map['id'] as int?,
       name: map['name'] as String,
-      type: CategoryType.values
-          .firstWhere((e) => e.name == map['type']),
+      type: CategoryType.values.firstWhere((e) => e.name == map['type']),
+      ttype: transferType.values.firstWhere((e) => e.name == map['ttype']),
+      date: DateTime.parse(map['date'] as String),
       amount: map['amount'] as String,
-      isDeleted: (map['isDeleted'] as int?) == 1, 
     );
   }
 
   @override
   String toString() {
-    return 'CategoryModel(id: $id, name: $name, type: $type, amount: $amount, isDeleted: $isDeleted)';
+    return 'CategoryModel(id: $id, name: $name, type: $type, amount: $amount,)';
   }
 }

@@ -12,14 +12,14 @@ class Homepage extends StatelessWidget {
   Homepage({super.key});
 
   static ValueNotifier<int> selectedIndexNotifier = ValueNotifier(0);
-  static ValueNotifier<String> nameNotifier = ValueNotifier("Name");
+  static ValueNotifier<String> nameNotifier = ValueNotifier("");
   final _pages = const [Transactions(), Expenselist(), Incomelist()];
 
   @override
   Widget build(BuildContext context) {
     getName();
     return Scaffold(
-      backgroundColor: Colors.grey[200],
+      backgroundColor: Colors.white,
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.white,
         onPressed: () {
@@ -31,6 +31,7 @@ class Homepage extends StatelessWidget {
         ),
       ),
       appBar: AppBar(
+        elevation: 0,
         backgroundColor: Colors.white,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -82,6 +83,10 @@ class Homepage extends StatelessWidget {
   Future<void> getName() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     String a = await sharedPreferences.getString('name').toString();
-    nameNotifier.value = a;
+    if (a == 'null') {
+      nameNotifier.value = '';
+    } else {
+      nameNotifier.value = a;
+    }
   }
 }

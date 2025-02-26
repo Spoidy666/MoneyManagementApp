@@ -6,6 +6,7 @@ Future<void> deleteItemPopUp(BuildContext context, int id) async {
       context: context,
       builder: (ctx) {
         return SimpleDialog(
+          backgroundColor: Colors.white,
           title: Text('Do you want to delete this entry?'),
           children: [
             Padding(
@@ -14,13 +15,16 @@ Future<void> deleteItemPopUp(BuildContext context, int id) async {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   ElevatedButton(
-                      onPressed: () {
-                        return Navigator.pop(context);
-                      },
-                      child: Text(
-                        'No',
-                        style: TextStyle(color: Colors.black),
-                      )),
+                    onPressed: () {
+                      return Navigator.pop(context);
+                    },
+                    child: Text(
+                      'No',
+                      style: TextStyle(color: Colors.black),
+                    ),
+                    style: ButtonStyle(
+                        backgroundColor: WidgetStatePropertyAll(Colors.white)),
+                  ),
                   SizedBox(
                     width: 10,
                   ),
@@ -35,7 +39,7 @@ Future<void> deleteItemPopUp(BuildContext context, int id) async {
                     ),
                     style: ButtonStyle(
                         backgroundColor: WidgetStatePropertyAll(
-                            const Color.fromARGB(255, 204, 102, 95))),
+                            const Color.fromARGB(255, 0, 0, 0))),
                   )
                 ],
               ),

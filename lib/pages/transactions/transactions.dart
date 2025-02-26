@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:moneyapp/db/category_db.dart';
 import 'package:moneyapp/models/category_model.dart';
+import 'package:intl/intl.dart';
 
 class Transactions extends StatelessWidget {
   const Transactions({super.key});
@@ -46,7 +47,7 @@ class Transactions extends StatelessWidget {
                                 valueListenable: totalAmountNotifier,
                                 builder: (context, totalAmount, child) {
                                   return Text(
-                                    "₹ $totalAmount",
+                                    "₹$totalAmount",
                                     style: TextStyle(
                                         fontSize: 30,
                                         fontWeight: FontWeight.w700),
@@ -76,27 +77,75 @@ class Transactions extends StatelessWidget {
                               builder: (BuildContext ctx,
                                   List<CategoryModel> expenseList,
                                   Widget? child) {
+                                if (expenseList.isEmpty) {
+                                  return Center(
+                                      child: Text(
+                                          'Click on "+" to add a new entry'));
+                                }
                                 return ListView.separated(
+                                    physics: BouncingScrollPhysics(),
                                     itemBuilder: (ctx, index) {
                                       final data = expenseList[index];
-                                      return Card(
-                                        borderOnForeground: true,
-                                        color: Colors.white,
-                                        child: ListTile(
-                                          onTap: () {},
-                                          title: Text(data.name),
-                                          trailing: Text(
-                                            "${data.type == CategoryType.expense ? '-' : ''}₹ ${data.amount}",
-                                            style: TextStyle(
-                                                color: data.type ==
-                                                        CategoryType.expense
-                                                    ? Colors.red
-                                                    : Colors
-                                                        .green, // ✅ Red for expense, Green for income
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 15),
+                                      final currentMonth =
+                                          DateFormat('MMMM yyyy')
+                                              .format(data.date);
+
+                                      // Determine if a month header should be inserted
+                                      bool showMonthHeader = index == 0 ||
+                                          DateFormat('MMMM yyyy').format(
+                                                  expenseList[index - 1]
+                                                      .date) !=
+                                              currentMonth;
+                                      return Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          if (showMonthHeader)
+                                            Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical: 8),
+                                              child: Text(
+                                                currentMonth,
+                                                style: TextStyle(
+                                                  fontSize: 13,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.blueGrey,
+                                                ),
+                                              ),
+                                            ),
+                                          Card(
+                                            borderOnForeground: true,
+                                            color: Colors.white,
+                                            child: ListTile(
+                                              onTap: () {},
+                                              title: Text(data.name),
+                                              leading: CircleAvatar(
+                                                backgroundColor: Colors.accents[
+                                                    expenseList.indexOf(data) %
+                                                        Colors.accents.length],
+                                                child: Text(
+                                                  DateFormat('dd')
+                                                      .format(data.date),
+                                                  style: TextStyle(
+                                                      color: Colors.black),
+                                                ),
+                                              ),
+                                              subtitle: Text(data.ttype.name
+                                                  .toUpperCase()),
+                                              trailing: Text(
+                                                "${data.type == CategoryType.expense ? '-' : '+'}₹${data.amount}",
+                                                style: TextStyle(
+                                                    color: data.type ==
+                                                            CategoryType.expense
+                                                        ? Colors.red
+                                                        : Colors
+                                                            .green, // ✅ Red for expense, Green for income
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 15),
+                                              ),
+                                            ),
                                           ),
-                                        ),
+                                        ],
                                       );
                                     },
                                     separatorBuilder: (ctx, index) {
